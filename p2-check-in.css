@@ -93,6 +93,12 @@ p#p2-check-in-button a.active {
 	font-size: 11px;
 }
 
+.p2checkinwidget-list li p.minor {
+	font-size: 9px;
+	line-height: 18px !important;
+	text-transform: uppercase;
+}
+
 .p2checkinwidget-list li p.user-link {
 	font-size: 13px;
 }
@@ -101,6 +107,3 @@ p#p2-check-in-button a.active {
 li.checkedout {
 	opacity: 0.4;
 }
-
-/* kubrick style follows */
-#sidebar ul li.widget_p2checkinwidget ul li:before { content: none; }
