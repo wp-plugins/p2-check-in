@@ -3,7 +3,7 @@ Contributors: ryanimel
 Tags: p2, checkin, collaboration
 Requires at least: 3.0
 Tested up to: 3.4
-Stable tag: 0.2.1
+Stable tag: 0.3
 License: GPLv2 or later
 
 This plugin adds the ability for users to "check in" to the P2 theme when they're active.
@@ -16,7 +16,9 @@ The sidebar will list the users who are currently checked in, along with how lon
 
 The language in this plugin is purposefully left a big vague so you can use it for your own purposes. Checking in could mean literally checking into a building to show you're there (the purpose I developed the plugin for) or it could mean that you are simply available, and actively watching the P2.
 
-### Kudos
+In addition, the total amount of time someone has logged when "checked in" is displayed
+
+#### Kudos
 
 Props to the Who's Online plugin for P2, since I cribbed a number of the elements from that plugin to make the development of mine go a bit faster.
 
@@ -33,6 +35,11 @@ Upload the P2 Check In plugin to your blog, Activate it, then drop the P2 Check 
 3. Once you are checked in the "I'm leaving!" button displays and will check you out.
 
 == Changelog ==
+
+= 0.3 =
+* Feature: Total checked in time is now logged and displayed, by default, with the user list in the sidebar. Get competitive!
+* Also removed some more unused CSS.
+* Note: Unfortunately this release my end up checking users out if they're in at the time you upgrade. This is due to this release making the meta values uniform (with proper namespacing across the board). Ideally this will be the only release that resets anyone.
 
 = 0.2.1 =
 * Added kudos to the end of the description.
