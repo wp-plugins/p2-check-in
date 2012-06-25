@@ -2,8 +2,8 @@
 /* 
 Plugin Name: P2 Check In
 Plugin URI: http://wordpress.org/extend/plugins/p2-check-in
-Description: This plugin adds the ability for users to "check in" to the P2 when they're active. Once activated you'll find a new "Who's Checked In" widget that you can add to your sidebar, and a "Log In/I'm here!/I'm leaving!" button will automatically be added to your P2's header.
-Version: 0.2
+Description: This plugin adds the ability for users to "check in" to the P2 theme when they're active. Once activated you'll find a new "Who is Checked In" widget that you can add to your sidebar, and a "Log In/I'm here!/I'm leaving!" button will automatically be added to your P2's header.
+Version: 0.2.1
 Author: Ryan Imel
 Author URI: http://wpcandy.com
 License: GPLv2 or later
