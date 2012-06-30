@@ -3,7 +3,7 @@
 Plugin Name: P2 Check In
 Plugin URI: http://wordpress.org/extend/plugins/p2-check-in
 Description: This plugin adds the ability for users to "check in" to the P2 theme when they're active. Once activated you'll find a new "Who is Checked In" widget that you can add to your sidebar, and a "Log In/I'm here!/I'm leaving!" button will automatically be added to your P2's header.
-Version: 0.3
+Version: 0.3.1
 Author: Ryan Imel
 Author URI: http://wpcandy.com
 License: GPLv2 or later
@@ -13,7 +13,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 // Adds the CSS to the front end.
 function p2checkinwidget_enqueue() {
-	wp_enqueue_style(  'p2checkinwidget_css', plugins_url('p2-check-in.css', __FILE__), null, '0.3' );
+	wp_enqueue_style(  'p2checkinwidget_css', plugins_url('p2-check-in.css', __FILE__), null, '0.5' );
 }
 add_action('wp_enqueue_scripts', 'p2checkinwidget_enqueue');
 
@@ -113,6 +113,7 @@ function p2checkinwidget_list_authors() {
  * @return string HTML for the user row
  */
 function p2checkinwidget_user( $last_online_ts, $user ) {
+	
 	$avatar = '<a class="user-img" href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . get_avatar( $user->user_email, 52 ) . '</a>';
 	$name = $user->display_name;
 	$link = '<p class="user-link"><a href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . $name . '</a></p>';
@@ -127,7 +128,7 @@ function p2checkinwidget_user( $last_online_ts, $user ) {
 	
 	$p2checkin_totaltimedisplay = get_user_meta( $user->ID, 'p2checkin_totaltime', true );
 	$p2time_readable = number_format( ( $p2checkin_totaltimedisplay / 60 / 60 ), 2, '.', '' );
-
+	
 	if ( $rwi_checkedin ) {
 		
 		$timein = get_user_meta( $user->ID , 'p2checkin_time_checked_in', true );
@@ -135,8 +136,25 @@ function p2checkinwidget_user( $last_online_ts, $user ) {
 		$p2time_readable_temp = number_format( ( ( $timesofar + $p2checkin_totaltimedisplay ) / 60 / 60 ), 2, '.', '' );
 		$timephrase = '<p><strong>Checked in for ' . human_time_diff( $timein, $timenow ) . '</strong></p><p class="minor">Total: ' . $p2time_readable_temp . ' hours<p>';
 		
+		// Add the god action if the current user is an admin
+		$admincheckout = '';
+		
+		// Get logged in user info
+		global $current_user;
+		get_currentuserinfo();
+		
+		$loggedinuser = $current_user->ID;
+		$displayuser = $user->ID;
+		
+		if ( current_user_can('manage_options') && ( $displayuser != $loggedinuser ) ) {
+			
+			// Give the admins a god card
+			$admincheckout .= '<p class="p2checkin-adminoverride"><a href="?checkout=true&p2checkinuser=' . $user->ID . '">x</a></p>';
+			
+		}
+		
 		// If there's data, woot
-		$checkedin_output = $avatar . $link . $timephrase;
+		$checkedin_output = $avatar . $link . $timephrase . $admincheckout;
 		
 	} else if ( !($rwi_checkedin ) AND ( ( $timenow - $rwi_checkedouttime ) < $timetoshow ) )  {
 		
@@ -158,40 +176,80 @@ function checkin_checkout_button() {
 	global $current_user;
 	get_currentuserinfo();
 	
+	// To enable us to prevent cheatin'
+	$rwi_checkedin = get_user_meta( $current_user->ID, 'p2checkin_time_checked_in', true );
+	$rwi_checkedouttime = get_user_meta( $current_user->ID, 'p2checkin_time_checked_out', true );
+	
 	// Now, is the current user checked in or not?
 	if ( $current_user->ID AND isset( $_GET[checkin] ) ) {
 		
-		// So we know they're in
-		update_user_meta( $current_user->ID , 'p2checkin_currently_checked_in', true );
+		if ( $rwi_checkedin > $rwi_checkedouttime ) {
+			
+			// Do nothing, this person has already checked in. (They just refreshed and queued this up again.)
+			
+		} else {
 		
-		// So we know what time they showed up
-		update_user_meta( $current_user->ID , 'p2checkin_time_checked_in', current_time( 'timestamp' , 1 ) );
+			// So we know they're in
+			update_user_meta( $current_user->ID , 'p2checkin_currently_checked_in', true );
+		
+			// So we know what time they showed up
+			update_user_meta( $current_user->ID , 'p2checkin_time_checked_in', current_time( 'timestamp' , 1 ) );
+		
+		}
 		
 	} else if ( $current_user->ID AND isset( $_GET[checkout] ) ) {
 		
-		// Prevent cheatin'
-		$rwi_checkedin = get_user_meta( $current_user->ID, 'p2checkin_time_checked_in', true );
-		$rwi_checkedouttime = get_user_meta( $current_user->ID, 'p2checkin_time_checked_out', true );
-		
 		if ( $rwi_checkedouttime > $rwi_checkedin ) {
 			
-			echo '<p>Cheating? Tsk tsk.</p>';
+			// Removed, since it would be confusing for 99% of users to see this message.
+			//echo '<p>Cheating? Tsk tsk.</p>';
 		
 		} else {
 			
-			// So we know they're out
-			update_user_meta( $current_user->ID , 'p2checkin_currently_checked_in', false );
+			if ( isset( $_GET[p2checkinuser] )  && current_user_can( 'manage_options' ) ) {
+				
+				// Set the user variable for who's being forcibly checked out
+				$usercheckedoutbyforce = $_GET[p2checkinuser];
+				
+				// To enable us to prevent cheatin'
+				$rwi_forced_checkedin = get_user_meta( $usercheckedoutbyforce, 'p2checkin_time_checked_in', true );
+				$rwi_forced_checkedouttime = get_user_meta( $usercheckedoutbyforce, 'p2checkin_time_checked_out', true );
+				
+				if ( $rwi_forced_checkedouttime < $rwi_forced_checkedin ) {
+				
+					// So we know they're out
+					update_user_meta( $usercheckedoutbyforce , 'p2checkin_currently_checked_in', false );
+				
+					// So we know what time they left
+					update_user_meta( $usercheckedoutbyforce , 'p2checkin_time_checked_out', current_time( 'timestamp', 1 ) );
+				
+					// Keep a running total of checked in time. Why not?
+					$rwi_forced_checkedouttime_realz = get_user_meta( $usercheckedoutbyforce, 'p2checkin_time_checked_out', true );
+					$p2checkin_forced_timesofar = get_user_meta( $usercheckedoutbyforce, 'p2checkin_totaltime', true );
+					$p2checkin_forced_sessiontime = ( $rwi_forced_checkedouttime_realz - $rwi_forced_checkedin );
+					$p2checkin_forced_timesofar += $p2checkin_forced_sessiontime;
+				
+					update_user_meta( $usercheckedoutbyforce, 'p2checkin_totaltime', $p2checkin_forced_timesofar );
+				
+				}
+				
+			} else {
+			
+				// So we know they're out
+				update_user_meta( $current_user->ID , 'p2checkin_currently_checked_in', false );
 
-			// So we know what time they left
-			update_user_meta( $current_user->ID , 'p2checkin_time_checked_out', current_time( 'timestamp', 1 ) );
+				// So we know what time they left
+				update_user_meta( $current_user->ID , 'p2checkin_time_checked_out', current_time( 'timestamp', 1 ) );
 
-			// Keep a running total of checked in time. Why not?
-			$rwi_checkedouttime_realz = get_user_meta( $current_user->ID, 'p2checkin_time_checked_out', true );
-			$p2checkin_timesofar = get_user_meta( $current_user->ID, 'p2checkin_totaltime', true );
-			$p2checkin_sessiontime = ( $rwi_checkedouttime_realz - $rwi_checkedin );
-			$p2checkin_timesofar += $p2checkin_sessiontime;
-
-			update_user_meta( $current_user->ID, 'p2checkin_totaltime', $p2checkin_timesofar );
+				// Keep a running total of checked in time. Why not?
+				$rwi_checkedouttime_realz = get_user_meta( $current_user->ID, 'p2checkin_time_checked_out', true );
+				$p2checkin_timesofar = get_user_meta( $current_user->ID, 'p2checkin_totaltime', true );
+				$p2checkin_sessiontime = ( $rwi_checkedouttime_realz - $rwi_checkedin );
+				$p2checkin_timesofar += $p2checkin_sessiontime;
+				
+				update_user_meta( $current_user->ID, 'p2checkin_totaltime', $p2checkin_timesofar );
+			
+			}
 			
 		}
 		

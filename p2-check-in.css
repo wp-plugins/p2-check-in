@@ -107,3 +107,26 @@ p#p2-check-in-button a.active {
 li.checkedout {
 	opacity: 0.4;
 }
+
+/* Admin override */
+.checkedin {
+	position: relative;
+}
+
+.p2checkin-adminoverride {
+	position: absolute;
+	right: 0;
+	top: 0;	
+}
+
+.p2checkin-adminoverride a {
+	background: #eee;
+	color: #ccc;
+	display: block;
+	padding: 0 3px;
+}
+
+.p2checkin-adminoverride a:hover {
+	color: #D54E21;
+}
+
