@@ -2,8 +2,8 @@
 Contributors: ryanimel
 Tags: p2, checkin, collaboration
 Requires at least: 3.0
-Tested up to: 3.4
-Stable tag: 0.3.1
+Tested up to: 3.4.1
+Stable tag: 0.4
 License: GPLv2 or later
 
 This plugin adds the ability for users to "check in" to the P2 theme when they're active.
@@ -37,6 +37,10 @@ Upload the P2 Check In plugin to your blog, Activate it, then drop the P2 Check 
 3. Once you are checked in the "I'm leaving!" button displays and will check you out.
 
 == Changelog ==
+
+= 0.4 =
+* Feature: Made the plugin translation ready, kudos to David Decker for the reminder in the forums (http://wordpress.org/support/topic/plugin-p2-check-in-plugin-is-not-translateable?replies=2). Additional translations welcome!
+* Released: June 3, 2012
 
 = 0.3.1 =
 * Feature: Logged in admins can now check out users. Ideally this should only be done when someone forgets to check out or something. Use with caution.

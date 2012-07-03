@@ -3,7 +3,7 @@
 Plugin Name: P2 Check In
 Plugin URI: http://wordpress.org/extend/plugins/p2-check-in
 Description: This plugin adds the ability for users to "check in" to the P2 theme when they're active. Once activated you'll find a new "Who is Checked In" widget that you can add to your sidebar, and a "Log In/I'm here!/I'm leaving!" button will automatically be added to your P2's header.
-Version: 0.3.1
+Version: 0.4
 Author: Ryan Imel
 Author URI: http://wpcandy.com
 License: GPLv2 or later
@@ -16,6 +16,12 @@ function p2checkinwidget_enqueue() {
 	wp_enqueue_style(  'p2checkinwidget_css', plugins_url('p2-check-in.css', __FILE__), null, '0.5' );
 }
 add_action('wp_enqueue_scripts', 'p2checkinwidget_enqueue');
+
+
+add_action( 'plugins_loaded', 'p2checkin_languages' ); 
+function p2checkin_languages() { 
+	load_plugin_textdomain( 'p2-check-in', false, basename( dirname( __FILE__ ) ) . '/languages' );
+}
 
 
 // This sorts the users
@@ -114,9 +120,9 @@ function p2checkinwidget_list_authors() {
  */
 function p2checkinwidget_user( $last_online_ts, $user ) {
 	
-	$avatar = '<a class="user-img" href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . get_avatar( $user->user_email, 52 ) . '</a>';
+	$avatar = '<a class="user-img" href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__( "Posts by %s", "p2-check-in" ), $user->display_name) ) . '">' . get_avatar( $user->user_email, 52 ) . '</a>';
 	$name = $user->display_name;
-	$link = '<p class="user-link"><a href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . $name . '</a></p>';
+	$link = '<p class="user-link"><a href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__( "Posts by %s", "p2-check-in" ), $user->display_name) ) . '">' . $name . '</a></p>';
 
 	$link = apply_filters( 'p2checkinwidget_author_link', $link, $user );
 
@@ -134,7 +140,7 @@ function p2checkinwidget_user( $last_online_ts, $user ) {
 		$timein = get_user_meta( $user->ID , 'p2checkin_time_checked_in', true );
 		$timesofar = ( $timenow - $timein );
 		$p2time_readable_temp = number_format( ( ( $timesofar + $p2checkin_totaltimedisplay ) / 60 / 60 ), 2, '.', '' );
-		$timephrase = '<p><strong>Checked in for ' . human_time_diff( $timein, $timenow ) . '</strong></p><p class="minor">Total: ' . $p2time_readable_temp . ' hours<p>';
+		$timephrase = '<p><strong>' . __( 'Checked in for ', 'p2-check-in' ) . human_time_diff( $timein, $timenow ) . '</strong></p><p class="minor">' . __( 'Total: ', 'p2-check-in' ) . $p2time_readable_temp . __( ' hours', 'p2-check-in' ) . '</p>';
 		
 		// Add the god action if the current user is an admin
 		$admincheckout = '';
@@ -158,7 +164,7 @@ function p2checkinwidget_user( $last_online_ts, $user ) {
 		
 	} else if ( !($rwi_checkedin ) AND ( ( $timenow - $rwi_checkedouttime ) < $timetoshow ) )  {
 		
-		$timephrase = '<p><strong>Left ' . human_time_diff( $rwi_checkedouttime, $timenow ) . ' ago.</strong></p><p class="minor">Total: ' . $p2time_readable . ' hours</p>';
+		$timephrase = '<p><strong>' . __( 'Left', 'p2-check-in' )  . human_time_diff( $rwi_checkedouttime, $timenow ) . __( ' ago.', 'p2-check-in' ) . '</strong></p><p class="minor">' . __( 'Total: ', 'p2-check-in' ) . $p2time_readable . __( 'hours', 'p2-check-in' ) . '</p>';
 		
 		// They left somewhat recently
 		$checkedin_output = $avatar . $link . $timephrase;
@@ -260,15 +266,15 @@ function checkin_checkout_button() {
 	// Is anyone logged in? If not, make the button a log in button.	
 	if ( !( is_user_logged_in() ) ) {
 		
-		$buttonoutput = '<p id="p2-check-in-button"><a class="minor" href="' . wp_login_url( home_url() ) . '">Log In</a></p>';
+		$buttonoutput = '<p id="p2-check-in-button"><a class="minor" href="' . wp_login_url( home_url() ) . '">' . __( 'Log In', 'p2-check-in' ) . '</a></p>';
 		
 	} else if ( $nowin ) {
 		
-		$buttonoutput = '<p id="p2-check-in-button"><a class="minor" href="?checkout=true">I&rsquo;m leaving!</a></p>';
+		$buttonoutput = '<p id="p2-check-in-button"><a class="minor" href="?checkout=true">' . __( 'I&rsquo;m leaving!', 'p2-check-in' ) . '</a></p>';
 		
 	} else {
 		
-		$buttonoutput = '<p id="p2-check-in-button"><a href="?checkin=true">I&rsquo;m here!</a></p>';
+		$buttonoutput = '<p id="p2-check-in-button"><a href="?checkin=true">' . __( 'I&rsquo;m here!', 'p2-check-in' ) . '</a></p>';
 		
 	}
 		
@@ -291,7 +297,7 @@ function widget_p2checkinwidget_init() {
 	function widget_p2checkinwidget($args) {
 		
 		extract($args);
-		echo $before_widget . $before_title . "Currently Checked In" . $after_title;
+		echo $before_widget . $before_title . __( 'Currently Checked In', 'p2-check-in' ) . $after_title;
 		
 		echo checkin_checkout_button();
 		
@@ -307,5 +313,5 @@ function widget_p2checkinwidget_init() {
 
 	// This registers our widget so it appears with the other available
 	// widgets and can be dragged and dropped into any active sidebars.
-	wp_register_sidebar_widget( 'widget_p2checkinwidget', "Who's Checked In", 'widget_p2checkinwidget', array( 'description' => 'Display who has checked into the office (or wherever) via P2.') );
+	wp_register_sidebar_widget( 'widget_p2checkinwidget', __( "Who's Checked In", "p2-check-in" ), 'widget_p2checkinwidget', array( 'description' => __( 'Display who has checked into the office (or wherever) via P2.', 'p2-check-in' ) ) );
 }
