@@ -1,0 +1,73 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: P2 Check In\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-03 07:07-0500\n"
+"PO-Revision-Date: 2012-07-03 07:09-0500\n"
+"Last-Translator: Ryan Imel <ryan@wpcandy.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../p2-check-in.php:123
+#: ../p2-check-in.php:125
+#, php-format
+msgid "Posts by %s"
+msgstr "Posts by %s"
+
+#: ../p2-check-in.php:143
+msgid "Checked in for "
+msgstr "Checked in for"
+
+#: ../p2-check-in.php:143
+#: ../p2-check-in.php:167
+msgid "Total: "
+msgstr "Total:"
+
+#: ../p2-check-in.php:143
+msgid " hours"
+msgstr "hours"
+
+#: ../p2-check-in.php:167
+msgid "Left"
+msgstr "Left"
+
+#: ../p2-check-in.php:167
+msgid " ago."
+msgstr "ago."
+
+#: ../p2-check-in.php:167
+msgid "hours"
+msgstr "hours"
+
+#: ../p2-check-in.php:269
+msgid "Log In"
+msgstr "Log In"
+
+#: ../p2-check-in.php:273
+msgid "I&rsquo;m leaving!"
+msgstr "I&rsquo;m leaving!"
+
+#: ../p2-check-in.php:277
+msgid "I&rsquo;m here!"
+msgstr "I&rsquo;m here!"
+
+#: ../p2-check-in.php:300
+msgid "Currently Checked In"
+msgstr "Currently Checked In"
+
+#: ../p2-check-in.php:316
+msgid "Who's Checked In"
+msgstr "Who&rsquo;s Checked In"
+
+#: ../p2-check-in.php:316
+msgid "Display who has checked into the office (or wherever) via P2."
+msgstr "Display who has checked into the office (or wherever) via P2."
+
