@@ -3,7 +3,7 @@
 Plugin Name: P2 Check In
 Plugin URI: http://wordpress.org/extend/plugins/p2-check-in
 Description: This plugin adds the ability for users to "check in" to the P2 theme when they're active. Once activated you'll find a new "Who is Checked In" widget that you can add to your sidebar, and a "Log In/I'm here!/I'm leaving!" button will automatically be added to your P2's header.
-Version: 0.4
+Version: 0.4.1
 Author: Ryan Imel
 Author URI: http://wpcandy.com
 License: GPLv2 or later
@@ -140,7 +140,7 @@ function p2checkinwidget_user( $last_online_ts, $user ) {
 		$timein = get_user_meta( $user->ID , 'p2checkin_time_checked_in', true );
 		$timesofar = ( $timenow - $timein );
 		$p2time_readable_temp = number_format( ( ( $timesofar + $p2checkin_totaltimedisplay ) / 60 / 60 ), 2, '.', '' );
-		$timephrase = '<p><strong>' . __( 'Checked in for ', 'p2-check-in' ) . human_time_diff( $timein, $timenow ) . '</strong></p><p class="minor">' . __( 'Total: ', 'p2-check-in' ) . $p2time_readable_temp . __( ' hours', 'p2-check-in' ) . '</p>';
+		$timephrase = '<p><strong>' . __( 'Checked in for', 'p2-check-in' ) . '&nbsp;' . human_time_diff( $timein, $timenow ) . '</strong></p><p class="minor">' . __( 'Total:', 'p2-check-in' ) . '&nbsp;' . $p2time_readable_temp . '&nbsp;' . __( 'hours', 'p2-check-in' ) . '</p>';
 		
 		// Add the god action if the current user is an admin
 		$admincheckout = '';
